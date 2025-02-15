@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    font-family: Inter, system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-gray-50 text-gray-900 antialiased;
+  }
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-semibold shadow-sm
+    focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-colors duration-200
+    disabled:cursor-not-allowed disabled:opacity-70;
+  }
+
+  .btn-primary {
+    @apply bg-blue-600 text-white hover:bg-blue-500 focus-visible:outline-blue-600
+    disabled:bg-gray-300 disabled:hover:bg-gray-300;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-gray-700 border border-gray-300 hover:bg-gray-50;
+  }
+
+  .btn-success {
+    @apply bg-emerald-600 text-white border-emerald-600;
+  }
+
+  .input-base {
+    @apply block w-full rounded-lg border-gray-300 shadow-sm 
+    focus:border-blue-500 focus:ring-blue-500
+    disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed
+    sm:text-sm;
+  }
+
+  .table-base {
+    @apply min-w-full divide-y divide-gray-200;
+  }
+
+  .table-header {
+    @apply px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+  }
+
+  .table-cell {
+    @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
+  }
+}
