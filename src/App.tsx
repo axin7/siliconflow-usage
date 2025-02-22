@@ -23,7 +23,7 @@ function App() {
   const [lastSelectedKey, setLastSelectedKey] = useState<string | null>(null);
 
   const handleCheck = async () => {
-    const keyList = keys.split("\n").filter((key) => key.trim());
+    const keyList = Array.from(new Set(keys.split("\n").filter((key) => key.trim())));
     if (keyList.length === 0) return;
 
     setIsChecking(true);
