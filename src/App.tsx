@@ -37,41 +37,55 @@ function App() {
       })),
     );
 
-    for (let i = 0; i < keyList.length; i++) {
-      try {
-        const options = {
+    // 并行请求的批次大小，可以根据实际情况调整
+    const batchSize = 50;
+    const allResults = [...Array(keyList.length)].map((_, i) => ({
+      key: keyList[i],
+      balance: null as number | null,
+      status: "pending" as "pending" | "success" | "error",
+    }));
+    
+    // 将所有keys分成多个批次
+    for (let batchStart = 0; batchStart < keyList.length; batchStart += batchSize) {
+      const batchEnd = Math.min(batchStart + batchSize, keyList.length);
+      const currentBatch = keyList.slice(batchStart, batchEnd);
+      
+      // 为当前批次创建请求Promise数组
+      const batchPromises = currentBatch.map((key, batchIndex) => {
+        const globalIndex = batchStart + batchIndex;
+        
+        return fetch("https://api.siliconflow.cn/v1/user/info", {
           method: "GET",
           headers: {
-            Authorization: `Bearer ${keyList[i]}`,
+            Authorization: `Bearer ${key}`,
           },
-        };
-
-        const response = await fetch(
-          "https://api.siliconflow.cn/v1/user/info",
-          options,
-        );
-        const data = await response.json();
-
-        setResults((prev) => {
-          const newResults = [...prev];
-          newResults[i] = {
-            key: keyList[i],
-            balance: data.status ? parseFloat(data.data.totalBalance) : null,
-            status: data.status ? "success" : "error",
-          };
-          return newResults;
-        });
-      } catch (error) {
-        setResults((prev) => {
-          const newResults = [...prev];
-          newResults[i] = {
-            key: keyList[i],
-            balance: null,
-            status: "error",
-          };
-          return newResults;
-        });
-      }
+        })
+          .then(response => response.json())
+          .then(data => {
+            // 在本地数组中更新这个key的结果，但不立即更新状态
+            allResults[globalIndex] = {
+              key: key,
+              balance: data.status ? parseFloat(data.data.totalBalance) : null,
+              status: data.status ? "success" : "error",
+            };
+            return { success: true };
+          })
+          .catch(error => {
+            // 在本地数组中处理错误情况
+            allResults[globalIndex] = {
+              key: key,
+              balance: null,
+              status: "error",
+            };
+            return { success: false, error };
+          });
+      });
+      
+      // 等待当前批次的所有请求完成
+      await Promise.all(batchPromises);
+      
+      // 批次完成后一次性更新UI，而不是每个请求都更新
+      setResults([...allResults]);
     }
 
     setIsChecking(false);
