@@ -13,7 +13,7 @@ function App() {
   const [isChecking, setIsChecking] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [balanceFilter, setBalanceFilter] = useState<
-    "all" | "positive" | "zero"
+    "all" | "positive" | "zero" | "gt5" | "gt10"
   >("all");
   const [showCopyDropdown, setShowCopyDropdown] = useState(false);
   const [balanceSortOrder, setBalanceSortOrder] = useState<
@@ -148,6 +148,10 @@ function App() {
           return result.balance !== null && result.balance > 0;
         case "zero":
           return result.balance !== null && result.balance <= 0;
+        case "gt5":
+          return result.balance !== null && result.balance > 5;
+        case "gt10":
+          return result.balance !== null && result.balance > 10;
         default:
           return true;
       }
@@ -279,7 +283,9 @@ function App() {
                                     e.target.value as
                                       | "all"
                                       | "positive"
-                                      | "zero",
+                                      | "zero"
+                                      | "gt5"
+                                      | "gt10",
                                   )
                                 }
                                 className="block w-40 rounded-md border-gray-300 shadow-sm focus:border-emerald-500 focus:ring-emerald-500 sm:text-sm"
@@ -287,6 +293,8 @@ function App() {
                                 <option value="all">全部余额</option>
                                 <option value="positive">余额大于0</option>
                                 <option value="zero">余额小于等于0</option>
+                                <option value="gt5">余额大于5</option>
+                                <option value="gt10">余额大于10</option>
                               </select>
                             </div>
                           </div>
